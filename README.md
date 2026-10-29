@@ -9,7 +9,12 @@ Aplikasi lokal untuk **memperbesar resolusi gambar** (upscale) dan **mengonversi
 ## Mulai cepat
 
 ```bash
-cd ~/image-forge
+git clone https://github.com/Helmeeaja/image-forge.git
+cd image-forge
+
+python3 -m venv --system-site-packages .venv
+./.venv/bin/pip install pillow pillow-avif-plugin pillow-heif
+
 ./run.sh
 ```
 
@@ -43,19 +48,20 @@ Hentikan server dengan `Ctrl+C` di terminal.
 - **Pillow** (mesin gambar)
 - Opsional: `pillow-avif-plugin` dan `pillow-heif` untuk AVIF/HEIC
 
-Di mesin ini `.venv` sudah disiapkan lengkap, jadi tidak perlu instalasi apa pun. Kalau pindah mesin:
+Virtualenv **tidak disertakan** di repo (`.venv/` masuk `.gitignore`). Buat sekali setelah clone:
 
 ```bash
-cd ~/image-forge
 python3 -m venv --system-site-packages .venv
 ./.venv/bin/pip install pillow pillow-avif-plugin pillow-heif
 ```
 
+Kalau `pillow-avif-plugin` atau `pillow-heif` gagal dipasang, aplikasi tetap jalan — hanya format AVIF/HEIC yang tidak tersedia.
+
 ---
 
-## `run.sh` itu apa?
+## Launcher `run.sh`
 
-Script launcher 12 baris yang menyiapkan cara menjalankan server, supaya tidak perlu mengingat path Python atau mengaktifkan virtualenv manual:
+`run.sh` adalah script launcher yang menyiapkan cara menjalankan server, supaya tidak perlu mengingat path Python atau mengaktifkan virtualenv manual:
 
 ```bash
 #!/usr/bin/env bash
@@ -229,9 +235,9 @@ Contoh payload `/api/process`:
 ## Batasan
 
 - Maksimal **60 file** dan **100 MB total** per batch di UI. Server menerima body hingga 160 MB dan 60 MB per file.
-- Hasil dibatasi **64 MP** per gambar agar RAM tidak habis (mesin ini 3.3 GB). Bisa diubah lewat `IMAGE_FORGE_MAX_PIXELS`.
+- Hasil dibatasi **64 MP** per gambar agar RAM tidak habis, terutama di mesin dengan RAM kecil. Bisa diubah lewat `IMAGE_FORGE_MAX_PIXELS`.
 - GIF/WebP/HEIC animasi hanya diproses **frame pertama**.
-- HEIC/AVIF butuh plugin di `.venv` (sudah terpasang di mesin ini).
+- HEIC/AVIF butuh plugin `pillow-heif` / `pillow-avif-plugin` (lihat bagian Persyaratan).
 - File hasil sementara disimpan di `~/.cache/image-forge` dan dibersihkan setelah **12 jam**.
 - Thumbnail TIFF dan HEIC tidak bisa dibuat browser; kartu file menampilkan placeholder, tapi proses dan preview hasil tetap berjalan (preview dibuat server).
 
@@ -239,7 +245,7 @@ Contoh payload `/api/process`:
 
 ## Performa
 
-Uji nyata di mesin ini (AMD A6-6310, 3.3 GB RAM, tanpa GPU): **11 gambar campuran** (JPEG, PNG, WebP, BMP, GIF, TIFF, AVIF, HEIC; total ±4 MB) di-upscale 2× dan dikonversi ke WebP selesai dalam **±16 detik** lewat UI, termasuk upload dan pembuatan preview. Batch 7 gambar lewat API selesai dalam **±10 detik**.
+Uji nyata di mesin uji (AMD A6-6310, 3.3 GB RAM, tanpa GPU): **11 gambar campuran** (JPEG, PNG, WebP, BMP, GIF, TIFF, AVIF, HEIC; total ±4 MB) di-upscale 2× dan dikonversi ke WebP selesai dalam **±16 detik** lewat UI, termasuk upload dan pembuatan preview. Batch 7 gambar lewat API selesai dalam **±10 detik**.
 
 Untuk foto sehari-hari, Lanczos sudah sangat memadai dan hampir instan. Naikkan **Pertajam** ke 60–90 kalau hasil terasa kurang tajam.
 
