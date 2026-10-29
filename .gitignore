@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Hasil & cache lokal
+output/
+*.log
+image-forge.zip
+
+# Rahasia — jangan pernah di-commit
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.*
+credentials.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
